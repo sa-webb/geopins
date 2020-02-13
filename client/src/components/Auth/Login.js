@@ -6,15 +6,7 @@ import Typography from "@material-ui/core/Typography";
 
 import Context from '../../context';
 
-const MeQuery = `
-{
-  me {
-    _id
-    name
-    email
-    picture
-  }
-}`;
+import { MeQuery } from '../../graphql/queries.js';
 
 const Login = ({ classes }) => {
   const { dispatch } = useContext(Context);
