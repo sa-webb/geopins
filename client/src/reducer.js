@@ -1,9 +1,14 @@
-export default function reducer(state, action) {
-  switch (action.type) {
+/**
+ * Reducer - presents a problem in a much simpler form.
+ * @param {*} state 
+ * @param {*} action(type, payload)
+ */
+export default function reducer(state, {type, payload}) {
+  switch (type) {
     case 'LOGIN_USER':
       return {
         ...state,
-        currentUser: action.payload
+        currentUser: payload
       };
       // Return unchanged state 
     default:
