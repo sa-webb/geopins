@@ -1,4 +1,4 @@
-export const MeQuery = `
+export const ME_QUERY = `
 {
   me {
     _id
