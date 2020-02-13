@@ -1,24 +1,30 @@
 /**
  * Reducer - presents a problem in a much simpler form.
- * @param {*} state 
- * @param {*} action(type, payload)
+ * @param {*} state spread the incoming props (allow in)
+ * @param {*} action(type, payload) switch via type, specify payload
  */
-export default function reducer(state, {type, payload}) {
+import {
+  LOGIN_USER, IS_LOGGED_IN, SIGNOUT_USER
+} from './actions';
+export default function reducer(state, { type, payload }) {
   switch (type) {
-    case 'LOGIN_USER':
+    case LOGIN_USER:
       return {
         ...state,
         currentUser: payload
       };
-      // Return unchanged state 
+    case IS_LOGGED_IN:
+      return {
+        ...state,
+        isAuth: payload
+      };
+    case SIGNOUT_USER:
+      return {
+        ...state,
+        isAuth: false,
+        currentUser: null
+      };
     default:
-      return state;
+      return state; // Return unchanged state
   }
 }
-
-/**
- * According to what action takes place within our application,
- * the switch statement will invoke that action.
- * Spread the required props for that action.
- * And send the corresponding payload for that action.
- */
