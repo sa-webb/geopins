@@ -15,3 +15,10 @@ Context and Interceptor workflow.
 7. If not, createNewUser with googleUser data object.
 8. User context is now returned successfully in Apollo Server.
 9. Using the authenticated resolver, we can wrap gql operations with context.
+
+## GraphQL notes
+
+Client GraphQL operations must match Server operations.
+
+The client specifies the variable type in the parameter and then specifies the rest
+of the fields.
