@@ -1,8 +1,11 @@
 const { gql } = require('apollo-server');
-
+/**
+ * @typedef getPins Array of Non-null Pins || Null Array 
+ */
 module.exports = gql`
   type Query {
     me: User
+    getPins: [Pin!]
   }
 
   type Mutation {
