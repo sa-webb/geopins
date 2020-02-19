@@ -36,6 +36,11 @@ export default function reducer(state, { type, payload }) {
         ...state,
         draft: payload
       }
+    case ACTIONS.DELETE_DRAFT:
+      return {
+        ...state,
+        draft: null
+      }
     default:
       return state; // Return unchanged state
   }
