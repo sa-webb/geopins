@@ -1,39 +1,39 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext } from 'react';
 import axios from 'axios';
-import { withStyles } from "@material-ui/core/styles";
-import TextField from "@material-ui/core/TextField";
-import Typography from "@material-ui/core/Typography";
-import Button from "@material-ui/core/Button";
-import AddAPhotoIcon from "@material-ui/icons/AddAPhotoTwoTone";
-import LandscapeIcon from "@material-ui/icons/LandscapeOutlined";
-import ClearIcon from "@material-ui/icons/Clear";
-import SaveIcon from "@material-ui/icons/SaveTwoTone";
+import { withStyles } from '@material-ui/core/styles';
+import TextField from '@material-ui/core/TextField';
+import Typography from '@material-ui/core/Typography';
+import Button from '@material-ui/core/Button';
+import AddAPhotoIcon from '@material-ui/icons/AddAPhotoTwoTone';
+import LandscapeIcon from '@material-ui/icons/LandscapeOutlined';
+import ClearIcon from '@material-ui/icons/Clear';
+import SaveIcon from '@material-ui/icons/SaveTwoTone';
 //import { useMediaQuery } from "@material-ui/core/useMediaQuery";
 
 import Context from '../../context';
 import { CREATE_PIN_MUTATION } from '../../graphql/mutations';
-import { useClient } from "../../client";
+import { useClient } from '../../client';
 
 /**
- * 
- * @param {submitting} boolean sets state so multiple submits cannot take place simultaneously. 
+ *
+ * @param {submitting} boolean sets state so multiple submits cannot take place simultaneously.
  */
 const CreatePin = ({ classes }) => {
   const { state, dispatch } = useContext(Context);
   const client = useClient();
-  const [title, setTitle] = useState("");
-  const [image, setImage] = useState("");
-  const [content, setContent] = useState("");
+  const [title, setTitle] = useState('');
+  const [image, setImage] = useState('');
+  const [content, setContent] = useState('');
   const [submitting, setSubmitting] = useState(false);
   //const mobileSize = useMediaQuery("(max-width: 650px)");
 
   const handleDeleteDraft = () => {
-    setTitle("");
-    setImage("");
-    setContent("");
-    dispatch({ type: "DELETE_DRAFT" });
+    setTitle('');
+    setImage('');
+    setContent('');
+    dispatch({ type: 'DELETE_DRAFT' });
   };
-  
+
   const handleSubmit = async event => {
     try {
       event.preventDefault();
@@ -41,21 +41,25 @@ const CreatePin = ({ classes }) => {
       const url = await handleImageUpload();
       const { latitude, longitude } = state.draft;
       const variables = { title, image: url, content, latitude, longitude };
-      await client.request(CREATE_PIN_MUTATION, variables);
+      const { createPin } = await client.request(
+        CREATE_PIN_MUTATION,
+        variables
+      );
+      dispatch({ type: 'CREATE_PIN', payload: createPin });
       handleDeleteDraft(); // nullify draft upon submission
     } catch (err) {
       setSubmitting(false);
-      console.error("Error creating pin", err);
+      console.error('Error creating pin', err);
     }
   };
 
   const handleImageUpload = async () => {
     const data = new FormData();
-    data.append("file", image);
-    data.append("upload_preset", "geopins");
-    data.append("cloud_name", "sa-webb");
+    data.append('file', image);
+    data.append('upload_preset', 'geopins');
+    data.append('cloud_name', 'sa-webb');
     const res = await axios.post(
-      "https://api.cloudinary.com/v1_1/sa-webb/image/upload",
+      'https://api.cloudinary.com/v1_1/sa-webb/image/upload',
       data
     );
     return res.data.url;
@@ -65,31 +69,31 @@ const CreatePin = ({ classes }) => {
     <form className={classes.form}>
       <Typography
         className={classes.alignCenter}
-        component="h2"
-        variant="h4"
-        color="secondary"
+        component='h2'
+        variant='h4'
+        color='secondary'
       >
         <LandscapeIcon className={classes.iconLarge} /> Pin Location
       </Typography>
       <div>
         <TextField
-          name="title"
-          label="Title"
-          placeholder="Insert pin title"
+          name='title'
+          label='Title'
+          placeholder='Insert pin title'
           onChange={e => setTitle(e.target.value)}
         />
         <input
-          accept="image/*"
-          id="image"
-          type="file"
+          accept='image/*'
+          id='image'
+          type='file'
           className={classes.input}
           onChange={e => setImage(e.target.files[0])}
         />
-        <label htmlFor="image">
+        <label htmlFor='image'>
           <Button
-            style={{ color: image && "green" }} // if populated, icon turns green
-            component="span"
-            size="small"
+            style={{ color: image && 'green' }} // if populated, icon turns green
+            component='span'
+            size='small'
             className={classes.button}
           >
             <AddAPhotoIcon />
@@ -98,13 +102,13 @@ const CreatePin = ({ classes }) => {
       </div>
       <div className={classes.contentField}>
         <TextField
-          name="content"
-          label="Content"
+          name='content'
+          label='Content'
           multiline
           //rows={mobileSize ? "3" : "6"}
-          margin="normal"
+          margin='normal'
           fullWidth
-          variant="outlined"
+          variant='outlined'
           onChange={e => setContent(e.target.value)}
         />
       </div>
@@ -112,17 +116,17 @@ const CreatePin = ({ classes }) => {
         <Button
           onClick={handleDeleteDraft}
           className={classes.button}
-          variant="contained"
-          color="primary"
+          variant='contained'
+          color='primary'
         >
           <ClearIcon className={classes.leftIcon} />
           Discard
         </Button>
         <Button
-          type="submit"
+          type='submit'
           className={classes.button}
-          variant="contained"
-          color="secondary"
+          variant='contained'
+          color='secondary'
           disabled={!title.trim() || !content.trim() || !image || submitting} // trims blank input, doesn't allow another submit while submitting is true.
           onClick={handleSubmit}
         >
@@ -136,23 +140,23 @@ const CreatePin = ({ classes }) => {
 
 const styles = theme => ({
   form: {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    flexDirection: "column",
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'column',
     paddingBottom: theme.spacing.unit
   },
   contentField: {
     marginLeft: theme.spacing.unit,
     marginRight: theme.spacing.unit,
-    width: "95%"
+    width: '95%'
   },
   input: {
-    display: "none"
+    display: 'none'
   },
   alignCenter: {
-    display: "flex",
-    alignItems: "center"
+    display: 'flex',
+    alignItems: 'center'
   },
   iconLarge: {
     fontSize: 40,
