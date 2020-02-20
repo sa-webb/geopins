@@ -11,13 +11,14 @@ import ProtectedRoute from './ProtectedRoute';
 import App from './pages/App';
 import Splash from './pages/Splash';
 
+/**
+ * Using Context with Router.
+ * @state Application state after the reducer has run.
+ * @dispatch Dispatches actions that will change the state.
+ */
+
 const Root = () => {
   const initialState = useContext(Context);
-  /**
-   * Using Context with Router.
-   * @state Application state after the reducer has run.
-   * @dispatch Dispatches actions that will change the state.
-   */
   const [state, dispatch] = useReducer(reducer, initialState);
 
   return (
