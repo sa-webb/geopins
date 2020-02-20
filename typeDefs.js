@@ -1,26 +1,6 @@
-const { gql } = require('apollo-server');
-/**
- * @typedef getPins Array of Non-null Pins || Null Array 
- */
+const { gql } = require("apollo-server");
+
 module.exports = gql`
-  type Query {
-    me: User
-    getPins: [Pin!]
-  }
-
-  type Mutation {
-    createPin(input: CreatePinInput!): Pin
-    deletePin(pinId: ID!): Pin
-  }
-
-  input CreatePinInput {
-    title: String
-    image: String
-    content: String
-    latitude: Float
-    longitude: Float
-  }
-
   type User {
     _id: ID
     name: String
@@ -44,5 +24,30 @@ module.exports = gql`
     text: String
     createdAt: String
     author: User
+  }
+
+  input CreatePinInput {
+    title: String
+    image: String
+    content: String
+    latitude: Float
+    longitude: Float
+  }
+
+  type Query {
+    me: User
+    getPins: [Pin!]
+  }
+
+  type Mutation {
+    createPin(input: CreatePinInput!): Pin
+    deletePin(pinId: ID!): Pin
+    createComment(pinId: ID!, text: String!): Pin
+  }
+
+  type Subscription {
+    pinAdded: Pin
+    pinDeleted: Pin
+    pinUpdated: Pin
   }
 `;
