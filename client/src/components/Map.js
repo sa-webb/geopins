@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useContext } from 'react';
-import ReactMapGL, { NavigationControl, Marker } from 'react-map-gl';
+import ReactMapGL, { NavigationControl, Marker, Popup } from 'react-map-gl';
 import { withStyles } from '@material-ui/core/styles';
 import differenceInMinutes from 'date-fns/difference_in_minutes';
-// import Button from "@material-ui/core/Button";
-// import Typography from "@material-ui/core/Typography";
-// import DeleteIcon from "@material-ui/icons/DeleteTwoTone";
+import Button from '@material-ui/core/Button';
+import Typography from '@material-ui/core/Typography';
+import DeleteIcon from '@material-ui/icons/DeleteTwoTone';
 import Blog from './Blog';
 import Context from '../context';
 import PinIcon from './PinIcon';
@@ -29,12 +29,17 @@ const Map = ({ classes }) => {
 
   useEffect(() => {
     getUserPosition();
-  }, []); // Empty array specifices to only behave onMount and unMount
+  }, []);
 
-  const getPins = async () => {
-    const { getPins } = await client.request(GET_PINS_QUERY);
-    dispatch({ type: 'GET_PINS', payload: getPins });
-  };
+  const [popup, setPopup] = useState(null);
+
+  useEffect(() => {
+    const pinExists =
+      popup && state.pins.findIndex(pin => pin._id === popup._id) > -1;
+    if (!pinExists) {
+      setPopup(null);
+    }
+  }, [state.pins.length]);
 
   const getUserPosition = () => {
     if ('geolocation' in navigator) {
@@ -46,9 +51,14 @@ const Map = ({ classes }) => {
     }
   };
 
+  const getPins = async () => {
+    const { getPins } = await client.request(GET_PINS_QUERY);
+    dispatch({ type: ACTIONS.GET_PINS, payload: getPins });
+  };
+
   /**
    * @param {lngLat, LeftButton} destructed from event object.
-   * @event console.log
+   * @event console.log event object for MapBox click properties.
    */
   const handleMapClick = ({ lngLat, leftButton }) => {
     if (!leftButton) return;
@@ -63,13 +73,27 @@ const Map = ({ classes }) => {
   };
 
   /**
-   * If Pin is older than 30 mins, consider it new. 
+   * If Pin is older than 30 mins, consider it new.
    * @param {createdAt} pin
    */
   const highlightNewPin = pin => {
     const isNewPin =
       differenceInMinutes(Date.now(), Number(pin.createdAt)) <= 30;
     return isNewPin ? 'limegreen' : 'darkblue';
+  };
+
+  const handleSelectPin = pin => {
+    console.log("I clicked")
+    setPopup(pin);
+    dispatch({ type: "SET_PIN", payload: pin });
+  };
+
+  const isAuthUser = () => state.currentUser._id === popup.author._id;
+
+  const handleDeletePin = async pin => {
+    //const variables = { pinId: pin._id };
+    //await client.request(DELETE_PIN_MUTATION, variables);
+    setPopup(null);
   };
 
   return (
@@ -110,6 +134,7 @@ const Map = ({ classes }) => {
             <PinIcon size={40} color='hotpink' />
           </Marker>
         )}
+        {/* List pins */}
         {state.pins.map(pin => (
           <Marker
             key={pin._id}
@@ -119,13 +144,38 @@ const Map = ({ classes }) => {
             offsetTop={-37}
           >
             <PinIcon
-              //onClick={() => handleSelectPin(pin)}
+              onClick={() => handleSelectPin(pin)}
               size={40}
               color={highlightNewPin(pin)}
-              //color={highlightNewPin(pin)}
             />
           </Marker>
         ))}
+        {/* Popup modal for existing pins */}
+        {popup && (
+          <Popup
+            anchor='top'
+            latitude={popup.latitude}
+            longitude={popup.longitude}
+            closeOnClick={false}
+            onClose={() => setPopup(null)}
+          >
+            <img
+              className={classes.popupImage}
+              src={popup.image}
+              alt={popup.title}
+            />
+            <div className={classes.popupTab}>
+              <Typography>
+                {popup.latitude.toFixed(6)}, {popup.longitude.toFixed(6)}
+              </Typography>
+              {isAuthUser() && (
+                <Button onClick={() => handleDeletePin(popup)}>
+                  <DeleteIcon className={classes.deleteIcon} />
+                </Button>
+              )}
+            </div>
+          </Popup>
+        )}
       </ReactMapGL>
       <Blog />
     </div>
