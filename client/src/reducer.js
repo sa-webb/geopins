@@ -89,6 +89,6 @@ export default function reducer(state, { type, payload }) {
         currentPin: updatedCurrentPin
       };
     default:
-      return state; // Return unchanged state
+      return state; // Return unchanged state on default
   }
 }
