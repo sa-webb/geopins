@@ -3,6 +3,7 @@ import ReactMapGL, { NavigationControl, Marker, Popup } from 'react-map-gl';
 import { withStyles } from '@material-ui/core/styles';
 import differenceInMinutes from 'date-fns/difference_in_minutes';
 import Button from '@material-ui/core/Button';
+import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
 import DeleteIcon from '@material-ui/icons/DeleteTwoTone';
 import Blog from './Blog';
@@ -11,6 +12,7 @@ import PinIcon from './PinIcon';
 import * as ACTIONS from '../actions';
 import { useClient } from '../client';
 import { GET_PINS_QUERY } from '../graphql/queries';
+import { DELETE_PIN_MUTATION } from '../graphql/mutations';
 
 const INITIAL_VIEWPORT = {
   latitude: 35.158199909022834,
@@ -33,13 +35,13 @@ const Map = ({ classes }) => {
 
   const [popup, setPopup] = useState(null);
 
-  useEffect(() => {
-    const pinExists =
-      popup && state.pins.findIndex(pin => pin._id === popup._id) > -1;
-    if (!pinExists) {
-      setPopup(null);
-    }
-  }, [state.pins.length]);
+  // useEffect(() => {
+  //   const pinExists =
+  //     popup && state.pins.findIndex(pin => pin._id === popup._id) > -1;
+  //   if (!pinExists) {
+  //     setPopup(null);
+  //   }
+  // }, [state.pins.length]);
 
   const getUserPosition = () => {
     if ('geolocation' in navigator) {
@@ -62,6 +64,7 @@ const Map = ({ classes }) => {
    */
   const handleMapClick = ({ lngLat, leftButton }) => {
     if (!leftButton) return;
+    // setPopup(null);
     if (!state.draft) {
       dispatch({ type: ACTIONS.CREATE_DRAFT });
     }
@@ -83,16 +86,17 @@ const Map = ({ classes }) => {
   };
 
   const handleSelectPin = pin => {
-    console.log("I clicked")
+    console.log('I clicked');
     setPopup(pin);
-    dispatch({ type: "SET_PIN", payload: pin });
+    dispatch({ type: 'SET_PIN', payload: pin });
   };
 
   const isAuthUser = () => state.currentUser._id === popup.author._id;
 
   const handleDeletePin = async pin => {
-    //const variables = { pinId: pin._id };
-    //await client.request(DELETE_PIN_MUTATION, variables);
+    const variables = { pinId: pin._id };
+    const { deletePin } = await client.request(DELETE_PIN_MUTATION, variables);
+    dispatch({ type: ACTIONS.DELETE_PIN, payload: deletePin})
     setPopup(null);
   };
 
@@ -143,11 +147,9 @@ const Map = ({ classes }) => {
             offsetLeft={-19}
             offsetTop={-37}
           >
-            <PinIcon
-              onClick={() => handleSelectPin(pin)}
-              size={40}
-              color={highlightNewPin(pin)}
-            />
+            <IconButton onClick={() => handleSelectPin(pin)}>
+              <PinIcon size={40} color={highlightNewPin(pin)} />
+            </IconButton>
           </Marker>
         ))}
         {/* Popup modal for existing pins */}
