@@ -9,7 +9,8 @@ const { findOrCreateUser } = require('./controllers/userController');
 mongoose
   .connect(process.env.MONGO_LOCAL_URI, {
     useNewUrlParser: true,
-    useUnifiedTopology: true
+    useUnifiedTopology: true,
+    useFindAndModify: false
   })
   .then(() => console.log('MongoDB connection established'))
   .catch(() => console.log(err))
