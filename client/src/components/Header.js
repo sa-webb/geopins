@@ -9,6 +9,9 @@ import { unstable_useMediaQuery as useMediaQuery } from "@material-ui/core/useMe
 import Context from '../context';
 import Signout from './Auth/Signout';
 
+/**
+ * mobile: { display: none }
+ */
 const Header = ({ classes }) => {
   const { state } = useContext(Context);
   const { currentUser } = state;
