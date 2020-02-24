@@ -8,7 +8,7 @@ import AddAPhotoIcon from '@material-ui/icons/AddAPhotoTwoTone';
 import LandscapeIcon from '@material-ui/icons/LandscapeOutlined';
 import ClearIcon from '@material-ui/icons/Clear';
 import SaveIcon from '@material-ui/icons/SaveTwoTone';
-import { useMediaQuery } from "@material-ui/core/useMediaQuery";
+import { unstable_useMediaQuery as useMediaQuery } from "@material-ui/core/useMediaQuery";
 
 import Context from '../../context';
 import { CREATE_PIN_MUTATION } from '../../graphql/mutations';
