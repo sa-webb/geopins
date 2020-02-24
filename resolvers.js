@@ -30,7 +30,7 @@ module.exports = {
     }),
     deletePin: authenticated(async (root, args, ctx) => {
       const pinDeleted = await Pin.findOneAndDelete({ _id: args.pinId }).exec();
-      pubsub.publish(PIN_DELETED, { pinDeleted });
+      //pubsub.publish(PIN_DELETED, { pinDeleted });
       return pinDeleted;
     }),
   }
